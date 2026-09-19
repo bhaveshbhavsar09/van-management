@@ -205,8 +205,49 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
+  // Auth Logic for Register Page
+  const registerForm = document.getElementById('registerForm');
+  if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+      const role = document.getElementById('regRole').value;
+      const errorDiv = document.getElementById('registerError');
+      const successDiv = document.getElementById('registerSuccess');
+      
+      errorDiv.textContent = '';
+      successDiv.textContent = '';
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, role })
+        });
+        
+        if (res.ok) {
+          successDiv.textContent = 'Account created successfully! Redirecting...';
+          const user = await res.json();
+          localStorage.setItem('user', JSON.stringify(user));
+          
+          setTimeout(() => {
+            if (user.role === 'admin') window.location.href = 'index.html';
+            else if (user.role === 'driver') window.location.href = 'driver-dashboard.html';
+            else if (user.role === 'student') window.location.href = 'student-dashboard.html';
+          }, 1500);
+        } else {
+          const data = await res.json();
+          errorDiv.textContent = data.error || 'Registration failed';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Server error. Try again later.';
+      }
+    });
+  }
+
   // Auth Protection Check
-  if (!path.includes('login.html')) {
+  if (!path.includes('login.html') && !path.includes('register.html')) {
     const userStr = localStorage.getItem('user');
     if (!userStr) {
       window.location.href = 'login.html';
