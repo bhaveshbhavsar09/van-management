@@ -171,39 +171,111 @@ function downloadReport() {
 
 // Initialization on DOM Load
 document.addEventListener("DOMContentLoaded", function() {
-  // Fetch initial data
-  fetchStats();
-  loadVans();
-  loadDrivers();
-  loadStudents();
+  const path = window.location.pathname;
   
-  // Chart.js Setup
-  const chartCanvas = document.getElementById('revenueChart');
-  if (chartCanvas) {
-    const ctx = chartCanvas.getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-          label: 'Monthly Revenue ($)',
-          data: [1200, 1900, 1500, 2200, 2800, 2600],
-          borderColor: '#0ea5e9',
-          backgroundColor: 'rgba(14, 165, 233, 0.1)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true, grid: { color: '#e2e8f0' } },
-          x: { grid: { display: false } }
+  // Auth Logic for Login Page
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('loginError');
+      
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        if (res.ok) {
+          const user = await res.json();
+          localStorage.setItem('user', JSON.stringify(user));
+          
+          if (user.role === 'admin') window.location.href = 'index.html';
+          else if (user.role === 'driver') window.location.href = 'driver-dashboard.html';
+          else if (user.role === 'student') window.location.href = 'student-dashboard.html';
+        } else {
+          errorDiv.textContent = 'Invalid email or password';
         }
+      } catch (err) {
+        errorDiv.textContent = 'Server error. Try again later.';
       }
     });
+  }
+
+  // Auth Protection Check
+  if (!path.includes('login.html')) {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+      window.location.href = 'login.html';
+      return;
+    }
+    const user = JSON.parse(userStr);
+    
+    // Update Header UI
+    const userNameEl = document.querySelector('.user-name');
+    const userRoleEl = document.querySelector('.user-role');
+    if (userNameEl) userNameEl.textContent = user.email.split('@')[0];
+    if (userRoleEl) userRoleEl.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+    
+    // Role-based Access Control
+    const adminPages = ['index.html', 'vans.html', 'drivers.html', 'students.html', 'payments.html'];
+    const isRoot = path === '/' || path.endsWith('/');
+    const isOnAdminPage = adminPages.some(p => path.endsWith(p)) || isRoot;
+    
+    if (user.role !== 'admin' && isOnAdminPage) {
+      if (user.role === 'driver') window.location.href = 'driver-dashboard.html';
+      else if (user.role === 'student') window.location.href = 'student-dashboard.html';
+      return;
+    }
+
+    // Logout Functionality (Adding a listener to any button with id 'logoutBtn')
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+      });
+    }
+
+    // Only load Admin data if on an admin page (and user is admin)
+    if (user.role === 'admin' && isOnAdminPage) {
+      fetchStats();
+      loadVans();
+      loadDrivers();
+      loadStudents();
+      
+      // Chart.js Setup
+      const chartCanvas = document.getElementById('revenueChart');
+      if (chartCanvas) {
+        const ctx = chartCanvas.getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+              label: 'Monthly Revenue ($)',
+              data: [1200, 1900, 1500, 2200, 2800, 2600],
+              borderColor: '#0ea5e9',
+              backgroundColor: 'rgba(14, 165, 233, 0.1)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: '#e2e8f0' } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+      }
+    }
   }
 });

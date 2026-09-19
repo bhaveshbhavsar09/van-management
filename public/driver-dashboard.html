@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Driver Dashboard - Van Business</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <i class="ph-fill ph-van"></i>
+      <span>Van Fleet</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#" class="active"><i class="ph ph-steering-wheel"></i> My Schedule</a></li>
+    </ul>
+    <div style="padding: 20px; position: absolute; bottom: 0; width: 100%;">
+      <button id="logoutBtn" class="btn-secondary" style="width: 100%; justify-content: center;">
+        <i class="ph ph-sign-out"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-header">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <h2 style="margin: 0; font-size: 1.2rem;">Driver Portal</h2>
+      </div>
+      <div class="header-user">
+        <div class="user-info">
+          <span class="user-name">Driver</span>
+          <span class="user-role">Driver</span>
+        </div>
+        <img src="https://ui-avatars.com/api/?name=Driver&background=f59e0b&color=fff" alt="User">
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="section-header">
+        <h1 class="page-title">Welcome back, Driver!</h1>
+      </div>
+      
+      <div class="dashboard-sections" style="grid-template-columns: 1fr;">
+        <div class="card">
+          <h2 class="card-title">My Assigned Route</h2>
+          <div class="map-placeholder" style="height: 200px;">
+            <div class="map-overlay">
+              <i class="ph-fill ph-map-pin"></i> Route: Downtown -> High School
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h2 class="card-title">Payment Status</h2>
+          <p>Your current salary status: <span class="badge pending">Pending Transfer</span></p>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script src="script.js"></script>
+</body>
+</html>

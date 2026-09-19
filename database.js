@@ -8,6 +8,21 @@ const db = new sqlite3.Database(dbPath, (err) => {
   } else {
     console.log('Connected to the SQLite database.');
     db.serialize(() => {
+      // Create Users Table
+      db.run(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE,
+        password TEXT,
+        role TEXT
+      )`);
+
+      // Seed Users
+      const insertUser = db.prepare('INSERT OR IGNORE INTO users (email, password, role) VALUES (?, ?, ?)');
+      insertUser.run('admin@vanbusiness.com', 'admin123', 'admin');
+      insertUser.run('driver@vanbusiness.com', 'driver123', 'driver');
+      insertUser.run('student@vanbusiness.com', 'student123', 'student');
+      insertUser.finalize();
+
       // Create Vans Table
       db.run(`CREATE TABLE IF NOT EXISTS vans (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

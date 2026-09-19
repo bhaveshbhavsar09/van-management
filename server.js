@@ -94,6 +94,16 @@ app.get('/api/stats', (req, res) => {
   });
 });
 
+// API for Auth
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
+  db.get('SELECT * FROM users WHERE email = ? AND password = ?', [email, password], (err, user) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+    res.json({ id: user.id, email: user.email, role: user.role });
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

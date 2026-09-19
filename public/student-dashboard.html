@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - Van Business</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <i class="ph-fill ph-van"></i>
+      <span>Van Fleet</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#" class="active"><i class="ph ph-student"></i> My Details</a></li>
+    </ul>
+    <div style="padding: 20px; position: absolute; bottom: 0; width: 100%;">
+      <button id="logoutBtn" class="btn-secondary" style="width: 100%; justify-content: center;">
+        <i class="ph ph-sign-out"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-header">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <h2 style="margin: 0; font-size: 1.2rem;">Student Portal</h2>
+      </div>
+      <div class="header-user">
+        <div class="user-info">
+          <span class="user-name">Student</span>
+          <span class="user-role">Student</span>
+        </div>
+        <img src="https://ui-avatars.com/api/?name=Student&background=10b981&color=fff" alt="User">
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="section-header">
+        <h1 class="page-title">Welcome back, Student!</h1>
+      </div>
+      
+      <div class="dashboard-sections" style="grid-template-columns: 1fr;">
+        <div class="card">
+          <h2 class="card-title">Fee Status</h2>
+          <p>Your current monthly fee status: <span class="badge active">Paid</span></p>
+        </div>
+        
+        <div class="card">
+          <h2 class="card-title">Pick-up Information</h2>
+          <p><strong>Assigned Van:</strong> Van 2</p>
+          <p><strong>Pick-up Time:</strong> 07:15 AM</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script src="script.js"></script>
+</body>
+</html>
