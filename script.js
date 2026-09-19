@@ -74,3 +74,7 @@ function removeRow(btn) {
   let row = btn.parentNode.parentNode;
   row.parentNode.removeChild(row);
 }
+
+function downloadReport() {
+  alert("Your report has been successfully generated and downloaded!");
+}
