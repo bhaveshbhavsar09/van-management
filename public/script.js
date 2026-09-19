@@ -350,7 +350,7 @@ document.addEventListener("DOMContentLoaded", function() {
           data: {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
             datasets: [{
-              label: 'Monthly Revenue ($)',
+              label: 'Monthly Revenue (₹)',
               data: [1200, 1900, 1500, 2200, 2800, 2600],
               borderColor: '#0ea5e9',
               backgroundColor: 'rgba(14, 165, 233, 0.1)',
