@@ -1,5 +1,17 @@
 // API Integration Functions
 
+// Toggle Password Visibility Function
+window.togglePasswordVisibility = function(inputId, icon) {
+  const input = document.getElementById(inputId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.replace('ph-eye', 'ph-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.classList.replace('ph-eye-slash', 'ph-eye');
+  }
+};
+
 // Fetch stats for dashboard
 async function fetchStats() {
   try {

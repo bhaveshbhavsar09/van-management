@@ -22,7 +22,10 @@
       </div>
       <div class="form-group">
         <label for="regPassword">Password</label>
-        <input type="password" id="regPassword" placeholder="••••••••" required>
+        <div style="position: relative;">
+          <input type="password" id="regPassword" placeholder="••••••••" required style="width: 100%; padding-right: 40px;">
+          <i class="ph ph-eye toggle-password" onclick="togglePasswordVisibility('regPassword', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 1.2rem; color: #64748b;"></i>
+        </div>
       </div>
       <div class="form-group">
         <label for="regRole">Role</label>

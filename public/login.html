@@ -28,7 +28,10 @@
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" value="admin123" required>
+        <div style="position: relative;">
+          <input type="password" id="password" value="admin123" required style="width: 100%; padding-right: 40px;">
+          <i class="ph ph-eye toggle-password" onclick="togglePasswordVisibility('password', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 1.2rem; color: #64748b;"></i>
+        </div>
       </div>
       <button type="submit" class="btn-primary">Sign In</button>
       <div id="loginError" style="color: var(--danger-color); margin-top: 15px; font-weight: 600;"></div>
