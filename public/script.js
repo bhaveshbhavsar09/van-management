@@ -1,0 +1,209 @@
+// API Integration Functions
+
+// Fetch stats for dashboard
+async function fetchStats() {
+  try {
+    const res = await fetch('/api/stats');
+    const stats = await res.json();
+    if(document.getElementById('vanCount')) document.getElementById('vanCount').textContent = stats.vanCount;
+    if(document.getElementById('driverCount')) document.getElementById('driverCount').textContent = stats.driverCount;
+    if(document.getElementById('studentCount')) document.getElementById('studentCount').textContent = stats.studentCount;
+  } catch (err) {
+    console.error('Error fetching stats:', err);
+  }
+}
+
+// Vans
+async function loadVans() {
+  const table = document.getElementById("vanTable");
+  if (!table) return;
+  const tbody = table.getElementsByTagName('tbody')[0];
+  tbody.innerHTML = '';
+  
+  try {
+    const res = await fetch('/api/vans');
+    const vans = await res.json();
+    vans.forEach(van => {
+      let row = tbody.insertRow();
+      row.innerHTML = `<td>Van ${van.id} - ${van.name || 'Unnamed'}</td><td><span class="badge ${van.status === 'Active' ? 'active' : 'pending'}">${van.status}</span></td><td><button class="btn-danger" onclick="removeVan(${van.id}, this)"><i class="ph ph-trash"></i> Remove</button></td>`;
+    });
+  } catch (err) {
+    console.error('Error loading vans:', err);
+  }
+}
+
+async function addVan() {
+  const name = prompt("Enter Van Name:");
+  if (!name) return;
+  try {
+    const res = await fetch('/api/vans', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, status: 'Active' })
+    });
+    if (res.ok) {
+      loadVans();
+    }
+  } catch (err) {
+    console.error('Error adding van:', err);
+  }
+}
+
+async function removeVan(id, btn) {
+  try {
+    const res = await fetch(`/api/vans/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      let row = btn.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  } catch (err) {
+    console.error('Error removing van:', err);
+  }
+}
+
+// Drivers
+async function loadDrivers() {
+  const table = document.getElementById("driverTable");
+  if (!table) return;
+  const tbody = table.getElementsByTagName('tbody')[0];
+  tbody.innerHTML = '';
+  
+  try {
+    const res = await fetch('/api/drivers');
+    const drivers = await res.json();
+    drivers.forEach(driver => {
+      let row = tbody.insertRow();
+      row.innerHTML = `<td>${driver.name}</td><td><span class="badge ${driver.status === 'Active' ? 'active' : 'pending'}">${driver.status}</span></td><td><button class="btn-danger" onclick="removeDriver(${driver.id}, this)"><i class="ph ph-trash"></i> Remove</button></td>`;
+    });
+  } catch (err) {
+    console.error('Error loading drivers:', err);
+  }
+}
+
+async function addDriver() {
+  const name = prompt("Enter Driver Name:");
+  if (!name) return;
+  try {
+    const res = await fetch('/api/drivers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, status: 'Pending' })
+    });
+    if (res.ok) {
+      loadDrivers();
+    }
+  } catch (err) {
+    console.error('Error adding driver:', err);
+  }
+}
+
+async function removeDriver(id, btn) {
+  try {
+    const res = await fetch(`/api/drivers/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      let row = btn.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  } catch (err) {
+    console.error('Error removing driver:', err);
+  }
+}
+
+// Students
+async function loadStudents() {
+  const table = document.getElementById("studentTable");
+  if (!table) return;
+  const tbody = table.getElementsByTagName('tbody')[0];
+  tbody.innerHTML = '';
+  
+  try {
+    const res = await fetch('/api/students');
+    const students = await res.json();
+    students.forEach(student => {
+      let row = tbody.insertRow();
+      row.innerHTML = `<td>${student.name}</td><td><span class="badge ${student.status === 'Active' ? 'active' : 'pending'}">${student.status}</span></td><td><button class="btn-danger" onclick="removeStudent(${student.id}, this)"><i class="ph ph-trash"></i> Remove</button></td>`;
+    });
+  } catch (err) {
+    console.error('Error loading students:', err);
+  }
+}
+
+async function addStudent() {
+  const name = prompt("Enter Student Name:");
+  if (!name) return;
+  try {
+    const res = await fetch('/api/students', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, status: 'Pending' })
+    });
+    if (res.ok) {
+      loadStudents();
+    }
+  } catch (err) {
+    console.error('Error adding student:', err);
+  }
+}
+
+async function removeStudent(id, btn) {
+  try {
+    const res = await fetch(`/api/students/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      let row = btn.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  } catch (err) {
+    console.error('Error removing student:', err);
+  }
+}
+
+// Sidebar Toggle functionality
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('show');
+  overlay.classList.toggle('show');
+}
+
+function downloadReport() {
+  alert("Your report has been successfully generated and downloaded!");
+}
+
+// Initialization on DOM Load
+document.addEventListener("DOMContentLoaded", function() {
+  // Fetch initial data
+  fetchStats();
+  loadVans();
+  loadDrivers();
+  loadStudents();
+  
+  // Chart.js Setup
+  const chartCanvas = document.getElementById('revenueChart');
+  if (chartCanvas) {
+    const ctx = chartCanvas.getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Monthly Revenue ($)',
+          data: [1200, 1900, 1500, 2200, 2800, 2600],
+          borderColor: '#0ea5e9',
+          backgroundColor: 'rgba(14, 165, 233, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#e2e8f0' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+});
