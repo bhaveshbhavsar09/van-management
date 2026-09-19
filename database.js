@@ -34,8 +34,14 @@ const db = new sqlite3.Database(dbPath, (err) => {
       db.run(`CREATE TABLE IF NOT EXISTS drivers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        status TEXT
+        status TEXT,
+        van_id INTEGER
       )`);
+
+      // Safely add column for existing databases
+      db.run(`ALTER TABLE drivers ADD COLUMN van_id INTEGER`, (err) => {
+        // Will throw an error if the column already exists, which is safe to ignore.
+      });
 
       // Create Students Table
       db.run(`CREATE TABLE IF NOT EXISTS students (

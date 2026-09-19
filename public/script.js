@@ -86,7 +86,7 @@ async function loadDrivers() {
     const drivers = await res.json();
     drivers.forEach(driver => {
       let row = tbody.insertRow();
-      row.innerHTML = `<td>${driver.name}</td><td><span class="badge ${driver.status === 'Active' ? 'active' : 'pending'}">${driver.status}</span></td><td><button class="btn-danger" onclick="removeDriver(${driver.id}, this)"><i class="ph ph-trash"></i> Remove</button></td>`;
+      row.innerHTML = `<td>${driver.name}</td><td>${driver.van_name || 'Unassigned'}</td><td><span class="badge ${driver.status === 'Active' ? 'active' : 'pending'}">${driver.status}</span></td><td><button class="btn-secondary" style="margin-right: 5px;" onclick="assignVan(${driver.id})"><i class="ph ph-van"></i> Assign</button><button class="btn-danger" onclick="removeDriver(${driver.id}, this)"><i class="ph ph-trash"></i> Remove</button></td>`;
     });
   } catch (err) {
     console.error('Error loading drivers:', err);
@@ -121,6 +121,40 @@ async function removeDriver(id, btn) {
     console.error('Error removing driver:', err);
   }
 }
+
+window.assignVan = async function(driverId) {
+  try {
+    const res = await fetch(`${API_BASE}/api/vans`);
+    const vans = await res.json();
+    
+    if (vans.length === 0) {
+      alert("No vans available. Please add a van first.");
+      return;
+    }
+    
+    let promptMsg = "Enter the ID of the van to assign:\n";
+    vans.forEach(v => {
+      promptMsg += `ID: ${v.id} - ${v.name || 'Unnamed'}\n`;
+    });
+    
+    const vanId = prompt(promptMsg);
+    if (!vanId) return;
+    
+    const assignRes = await fetch(`${API_BASE}/api/drivers/${driverId}/assign`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ van_id: parseInt(vanId) })
+    });
+    
+    if (assignRes.ok) {
+      loadDrivers();
+    } else {
+      alert("Failed to assign van.");
+    }
+  } catch (err) {
+    console.error('Error assigning van:', err);
+  }
+};
 
 // Students
 async function loadStudents() {

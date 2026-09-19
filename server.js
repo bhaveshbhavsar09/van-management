@@ -35,7 +35,12 @@ app.delete('/api/vans/:id', (req, res) => {
 
 // API for Drivers
 app.get('/api/drivers', (req, res) => {
-  db.all('SELECT * FROM drivers', [], (err, rows) => {
+  const query = `
+    SELECT drivers.*, vans.name as van_name 
+    FROM drivers 
+    LEFT JOIN vans ON drivers.van_id = vans.id
+  `;
+  db.all(query, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
@@ -53,6 +58,14 @@ app.delete('/api/drivers/:id', (req, res) => {
   db.run('DELETE FROM drivers WHERE id = ?', [req.params.id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'deleted', changes: this.changes });
+  });
+});
+
+app.put('/api/drivers/:id/assign', (req, res) => {
+  const { van_id } = req.body;
+  db.run('UPDATE drivers SET van_id = ? WHERE id = ?', [van_id, req.params.id], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'assigned', changes: this.changes });
   });
 });
 
