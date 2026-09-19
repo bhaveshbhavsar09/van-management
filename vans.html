@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Drivers - Van Business</title>
+  <title>Vans - Van Business</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
@@ -16,8 +16,8 @@
     </div>
     <ul class="nav-links">
       <li><a href="index.html"><i class="ph ph-squares-four"></i> Dashboard</a></li>
-      <li><a href="vans.html"><i class="ph ph-van"></i> Vans</a></li>
-      <li><a href="drivers.html" class="active"><i class="ph ph-steering-wheel"></i> Drivers</a></li>
+      <li><a href="vans.html" class="active"><i class="ph ph-van"></i> Vans</a></li>
+      <li><a href="drivers.html"><i class="ph ph-steering-wheel"></i> Drivers</a></li>
       <li><a href="students.html"><i class="ph ph-student"></i> Students</a></li>
       <li><a href="payments.html"><i class="ph ph-credit-card"></i> Payments</a></li>
     </ul>
@@ -46,20 +46,20 @@
     <div class="content-wrapper">
       <div class="section-header">
         <div>
-          <h1 class="page-title">Manage Drivers</h1>
+          <h1 class="page-title">Manage Vans</h1>
         </div>
-        <button class="btn-primary" style="width: auto; padding: 10px 20px; font-size: 0.9rem;" onclick="addDriver()">
-          <i class="ph ph-plus" style="vertical-align: middle;"></i> Add Driver
+        <button class="btn-primary" style="width: auto; padding: 10px 20px; font-size: 0.9rem;" onclick="addVan()">
+          <i class="ph ph-plus" style="vertical-align: middle;"></i> Add Van
         </button>
       </div>
 
       <div class="card">
         <div class="table-container">
-          <table id="driverTable">
+          <table id="vanTable">
             <thead>
               <tr>
-                <th>Driver Name</th>
-                <th>Payment Status</th>
+                <th>Van ID</th>
+                <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -68,6 +68,10 @@
             </tbody>
           </table>
         </div>
+      </div>
+      
+      <div class="card" style="margin-top: 24px; display: flex; justify-content: center;">
+        <img src="https://cdn.pixabay.com/photo/2016/11/29/09/08/van-1866521_1280.jpg" alt="Van" style="max-width: 100%; border-radius: 12px; box-shadow: var(--shadow-md);">
       </div>
     </div>
   </main>

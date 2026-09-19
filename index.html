@@ -5,34 +5,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Van Business</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <header>
-    <h1>🚐 Van Business Management System</h1>
-    <nav>
-      <ul>
-        <li><a href="index.html">Dashboard</a></li>
-        <li><a href="vans.html">Vans</a></li>
-        <li><a href="drivers.html">Drivers</a></li>
-        <li><a href="students.html">Students</a></li>
-        <li><a href="payments.html">Payments</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <section class="section">
-    <h2>Business Overview</h2>
-    <div class="stats">
-      <div class="stat-card">Total Vans: <span id="vanCount">3</span></div>
-      <div class="stat-card">Total Drivers: <span id="driverCount">2</span></div>
-      <div class="stat-card">Total Students: <span id="studentCount">25</span></div>
-      <div class="stat-card">Pending Fees: <span id="pendingFees">5</span></div>
-      <div class="stat-card">Pending Driver Payments: <span id="pendingPayments">1</span></div>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <i class="ph-fill ph-van"></i>
+      <span>Van Fleet</span>
     </div>
-  </section>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active"><i class="ph ph-squares-four"></i> Dashboard</a></li>
+      <li><a href="vans.html"><i class="ph ph-van"></i> Vans</a></li>
+      <li><a href="drivers.html"><i class="ph ph-steering-wheel"></i> Drivers</a></li>
+      <li><a href="students.html"><i class="ph ph-student"></i> Students</a></li>
+      <li><a href="payments.html"><i class="ph ph-credit-card"></i> Payments</a></li>
+    </ul>
+  </aside>
 
-  <footer>
-    <p>&copy; 2026 Van Business | Designed by Bhavesh</p>
-  </footer>
+  <main class="main-content">
+    <header class="top-header">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-toggle" onclick="toggleSidebar()">
+          <i class="ph ph-list"></i>
+        </button>
+        <div class="header-search">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="text" placeholder="Search vans, drivers, students...">
+        </div>
+      </div>
+      <div class="header-user">
+        <div class="user-info">
+          <span class="user-name">Admin User</span>
+          <span class="user-role">Manager</span>
+        </div>
+        <img src="https://ui-avatars.com/api/?name=Admin+User&background=0ea5e9&color=fff" alt="User">
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="section-header">
+        <div>
+          <h1 class="page-title">Business Overview</h1>
+        </div>
+        <button class="btn-primary" style="width: auto; padding: 10px 20px; font-size: 0.9rem;">
+          <i class="ph ph-file-arrow-down" style="vertical-align: middle;"></i> Download Report
+        </button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="ph ph-van"></i></div>
+          <div class="stat-details">
+            <h3>Total Vans</h3>
+            <div class="stat-value" id="vanCount">3</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="ph ph-steering-wheel"></i></div>
+          <div class="stat-details">
+            <h3>Total Drivers</h3>
+            <div class="stat-value" id="driverCount">2</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="ph ph-student"></i></div>
+          <div class="stat-details">
+            <h3>Total Students</h3>
+            <div class="stat-value" id="studentCount">25</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="ph ph-warning-circle"></i></div>
+          <div class="stat-details">
+            <h3>Pending Fees</h3>
+            <div class="stat-value" id="pendingFees">5</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-sections">
+        <div class="card">
+          <h2 class="card-title">Revenue Trends</h2>
+          <div class="chart-container">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Live Tracking <span class="badge active">Active</span></h2>
+          <div class="map-placeholder">
+            <!-- Simulated map background via CSS -->
+            <div class="map-overlay">
+              <i class="ph-fill ph-map-pin"></i> 3 Vans on route
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script src="script.js"></script>
 </body>
 </html>

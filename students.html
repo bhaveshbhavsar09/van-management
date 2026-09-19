@@ -5,33 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Students - Van Business</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
-  <header>
-    <h1>🚐 Van Business Management System</h1>
-    <nav>
-      <ul>
-        <li><a href="index.html">Dashboard</a></li>
-        <li><a href="vans.html">Vans</a></li>
-        <li><a href="drivers.html">Drivers</a></li>
-        <li><a href="students.html">Students</a></li>
-        <li><a href="payments.html">Payments</a></li>
-      </ul>
-    </nav>
-  </header>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <i class="ph-fill ph-van"></i>
+      <span>Van Fleet</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html"><i class="ph ph-squares-four"></i> Dashboard</a></li>
+      <li><a href="vans.html"><i class="ph ph-van"></i> Vans</a></li>
+      <li><a href="drivers.html"><i class="ph ph-steering-wheel"></i> Drivers</a></li>
+      <li><a href="students.html" class="active"><i class="ph ph-student"></i> Students</a></li>
+      <li><a href="payments.html"><i class="ph ph-credit-card"></i> Payments</a></li>
+    </ul>
+  </aside>
 
-  <section class="section">
-    <h2>Manage Students</h2>
-    <button onclick="addStudent()">+ Add Student</button>
-    <table id="studentTable">
-      <tr><th>Student Name</th><th>Fee Status</th><th>Action</th></tr>
-    </table>
-  </section>
+  <main class="main-content">
+    <header class="top-header">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-toggle" onclick="toggleSidebar()">
+          <i class="ph ph-list"></i>
+        </button>
+        <div class="header-search">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="text" placeholder="Search vans, drivers, students...">
+        </div>
+      </div>
+      <div class="header-user">
+        <div class="user-info">
+          <span class="user-name">Admin User</span>
+          <span class="user-role">Manager</span>
+        </div>
+        <img src="https://ui-avatars.com/api/?name=Admin+User&background=0ea5e9&color=fff" alt="User">
+      </div>
+    </header>
 
-  <footer>
-    <p>&copy; 2026 Van Business | Designed by Bhavesh</p>
-  </footer>
+    <div class="content-wrapper">
+      <div class="section-header">
+        <div>
+          <h1 class="page-title">Manage Students</h1>
+        </div>
+        <button class="btn-primary" style="width: auto; padding: 10px 20px; font-size: 0.9rem;" onclick="addStudent()">
+          <i class="ph ph-plus" style="vertical-align: middle;"></i> Add Student
+        </button>
+      </div>
 
+      <div class="card">
+        <div class="table-container">
+          <table id="studentTable">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Fee Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows will be added here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+  
   <script src="script.js"></script>
 </body>
 </html>
