@@ -82,11 +82,32 @@ async function loadDrivers() {
   tbody.innerHTML = '';
   
   try {
+    // Fetch vans first to populate the dropdowns
+    const vansRes = await fetch(`${API_BASE}/api/vans`);
+    const vans = await vansRes.json();
+    
     const res = await fetch(`${API_BASE}/api/drivers`);
     const drivers = await res.json();
     drivers.forEach(driver => {
       let row = tbody.insertRow();
-      row.innerHTML = `<td>${driver.name}</td><td>${driver.van_name || 'Unassigned'}</td><td><span class="badge ${driver.status === 'Active' ? 'active' : 'pending'}">${driver.status}</span></td><td><button class="btn-secondary" style="margin-right: 5px;" onclick="assignVan(${driver.id})"><i class="ph ph-van"></i> Assign</button><button class="btn-danger" onclick="removeDriver(${driver.id}, this)"><i class="ph ph-trash"></i> Remove</button></td>`;
+      
+      // Build dropdown options
+      let vanOptions = `<option value="">-- Unassigned --</option>`;
+      vans.forEach(v => {
+        const isSelected = driver.van_id === v.id ? 'selected' : '';
+        vanOptions += `<option value="${v.id}" ${isSelected}>Van ${v.id} - ${v.name || 'Unnamed'}</option>`;
+      });
+      
+      let selectHtml = `<select onchange="assignVanDirect(${driver.id}, this.value)" style="padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; font-family: inherit;">
+                          ${vanOptions}
+                        </select>`;
+
+      row.innerHTML = `
+        <td>${driver.name}</td>
+        <td>${selectHtml}</td>
+        <td><span class="badge ${driver.status === 'Active' ? 'active' : 'pending'}">${driver.status}</span></td>
+        <td><button class="btn-danger" onclick="removeDriver(${driver.id}, this)"><i class="ph ph-trash"></i> Remove</button></td>
+      `;
     });
   } catch (err) {
     console.error('Error loading drivers:', err);
@@ -122,37 +143,22 @@ async function removeDriver(id, btn) {
   }
 }
 
-window.assignVan = async function(driverId) {
+window.assignVanDirect = async function(driverId, vanId) {
   try {
-    const res = await fetch(`${API_BASE}/api/vans`);
-    const vans = await res.json();
-    
-    if (vans.length === 0) {
-      alert("No vans available. Please add a van first.");
-      return;
-    }
-    
-    let promptMsg = "Enter the ID of the van to assign:\n";
-    vans.forEach(v => {
-      promptMsg += `ID: ${v.id} - ${v.name || 'Unnamed'}\n`;
-    });
-    
-    const vanId = prompt(promptMsg);
-    if (!vanId) return;
-    
+    const payload = vanId ? { van_id: parseInt(vanId) } : { van_id: null };
     const assignRes = await fetch(`${API_BASE}/api/drivers/${driverId}/assign`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ van_id: parseInt(vanId) })
+      body: JSON.stringify(payload)
     });
     
-    if (assignRes.ok) {
-      loadDrivers();
-    } else {
+    if (!assignRes.ok) {
       alert("Failed to assign van.");
+      loadDrivers(); // reload to revert the dropdown
     }
   } catch (err) {
     console.error('Error assigning van:', err);
+    loadDrivers();
   }
 };
 
