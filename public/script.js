@@ -1,4 +1,5 @@
 // API Integration Functions
+const API_BASE = 'http://localhost:3000';
 
 // Toggle Password Visibility Function
 window.togglePasswordVisibility = function(inputId, icon) {
@@ -15,7 +16,7 @@ window.togglePasswordVisibility = function(inputId, icon) {
 // Fetch stats for dashboard
 async function fetchStats() {
   try {
-    const res = await fetch('/api/stats');
+    const res = await fetch(`${API_BASE}/api/stats`);
     const stats = await res.json();
     if(document.getElementById('vanCount')) document.getElementById('vanCount').textContent = stats.vanCount;
     if(document.getElementById('driverCount')) document.getElementById('driverCount').textContent = stats.driverCount;
@@ -33,7 +34,7 @@ async function loadVans() {
   tbody.innerHTML = '';
   
   try {
-    const res = await fetch('/api/vans');
+    const res = await fetch(`${API_BASE}/api/vans`);
     const vans = await res.json();
     vans.forEach(van => {
       let row = tbody.insertRow();
@@ -48,7 +49,7 @@ async function addVan() {
   const name = prompt("Enter Van Name:");
   if (!name) return;
   try {
-    const res = await fetch('/api/vans', {
+    const res = await fetch(`${API_BASE}/api/vans`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, status: 'Active' })
@@ -63,7 +64,7 @@ async function addVan() {
 
 async function removeVan(id, btn) {
   try {
-    const res = await fetch(`/api/vans/${id}`, { method: 'DELETE' });
+    const res = await fetch(`${API_BASE}/api/vans/${id}`, { method: 'DELETE' });
     if (res.ok) {
       let row = btn.parentNode.parentNode;
       row.parentNode.removeChild(row);
@@ -81,7 +82,7 @@ async function loadDrivers() {
   tbody.innerHTML = '';
   
   try {
-    const res = await fetch('/api/drivers');
+    const res = await fetch(`${API_BASE}/api/drivers`);
     const drivers = await res.json();
     drivers.forEach(driver => {
       let row = tbody.insertRow();
@@ -96,7 +97,7 @@ async function addDriver() {
   const name = prompt("Enter Driver Name:");
   if (!name) return;
   try {
-    const res = await fetch('/api/drivers', {
+    const res = await fetch(`${API_BASE}/api/drivers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, status: 'Pending' })
@@ -111,7 +112,7 @@ async function addDriver() {
 
 async function removeDriver(id, btn) {
   try {
-    const res = await fetch(`/api/drivers/${id}`, { method: 'DELETE' });
+    const res = await fetch(`${API_BASE}/api/drivers/${id}`, { method: 'DELETE' });
     if (res.ok) {
       let row = btn.parentNode.parentNode;
       row.parentNode.removeChild(row);
@@ -129,7 +130,7 @@ async function loadStudents() {
   tbody.innerHTML = '';
   
   try {
-    const res = await fetch('/api/students');
+    const res = await fetch(`${API_BASE}/api/students`);
     const students = await res.json();
     students.forEach(student => {
       let row = tbody.insertRow();
@@ -144,7 +145,7 @@ async function addStudent() {
   const name = prompt("Enter Student Name:");
   if (!name) return;
   try {
-    const res = await fetch('/api/students', {
+    const res = await fetch(`${API_BASE}/api/students`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, status: 'Pending' })
@@ -159,7 +160,7 @@ async function addStudent() {
 
 async function removeStudent(id, btn) {
   try {
-    const res = await fetch(`/api/students/${id}`, { method: 'DELETE' });
+    const res = await fetch(`${API_BASE}/api/students/${id}`, { method: 'DELETE' });
     if (res.ok) {
       let row = btn.parentNode.parentNode;
       row.parentNode.removeChild(row);
@@ -195,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function() {
       const errorDiv = document.getElementById('loginError');
       
       try {
-        const res = await fetch('/api/login', {
+        const res = await fetch(`${API_BASE}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
@@ -232,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function() {
       successDiv.textContent = '';
 
       try {
-        const res = await fetch('/api/register', {
+        const res = await fetch(`${API_BASE}/api/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password, role })
