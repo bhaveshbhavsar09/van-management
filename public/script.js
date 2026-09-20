@@ -253,7 +253,7 @@ document.addEventListener("DOMContentLoaded", function() {
           errorDiv.textContent = 'Invalid email or password';
         }
       } catch (err) {
-        errorDiv.textContent = 'Server error. Try again later.';
+        errorDiv.textContent = 'Server connection failed. Is the backend running?';
       }
     });
   }
@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", function() {
           errorDiv.textContent = data.error || 'Registration failed';
         }
       } catch (err) {
-        errorDiv.textContent = 'Server error. Try again later.';
+        errorDiv.textContent = 'Server connection failed. Is the backend running?';
       }
     });
   }
