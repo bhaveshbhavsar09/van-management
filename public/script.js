@@ -210,6 +210,125 @@ async function removeStudent(id, btn) {
   }
 }
 
+// Routes
+async function loadRoutes() {
+  const table = document.getElementById("routeTable");
+  if (!table) return;
+  const tbody = table.getElementsByTagName('tbody')[0];
+  tbody.innerHTML = '';
+  try {
+    const res = await fetch(`${API_BASE}/api/routes`);
+    const routes = await res.json();
+    routes.forEach(route => {
+      let row = tbody.insertRow();
+      row.innerHTML = `<td>Route ${route.id} - ${route.name}</td><td>${route.van_name || 'Unassigned'}</td><td><button class="btn-primary" onclick="viewStops(${route.id})">Stops</button></td>`;
+    });
+  } catch (err) { console.error(err); }
+}
+
+async function addRoute() {
+  const name = prompt("Enter Route Name:");
+  if (!name) return;
+  try {
+    await fetch(`${API_BASE}/api/routes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, van_id: null })
+    });
+    loadRoutes();
+  } catch (err) { console.error(err); }
+}
+
+// Maintenance
+async function loadMaintenance() {
+  const table = document.getElementById("maintenanceTable");
+  if (!table) return;
+  const tbody = table.getElementsByTagName('tbody')[0];
+  tbody.innerHTML = '';
+  try {
+    const res = await fetch(`${API_BASE}/api/maintenance`);
+    const logs = await res.json();
+    logs.forEach(log => {
+      let row = tbody.insertRow();
+      row.innerHTML = `<td>${log.date}</td><td>${log.van_name || 'Unknown'}</td><td>${log.type}</td><td>$${log.cost}</td><td>${log.description}</td>`;
+    });
+  } catch (err) { console.error(err); }
+}
+
+async function addMaintenance() {
+  const van_id = prompt("Enter Van ID:");
+  const type = prompt("Type (Fuel/Repair):");
+  const cost = prompt("Cost:");
+  const description = prompt("Description:");
+  if (!van_id || !type || !cost) return;
+  try {
+    await fetch(`${API_BASE}/api/maintenance`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ van_id: parseInt(van_id), type, cost: parseFloat(cost), date: new Date().toISOString().split('T')[0], description })
+    });
+    loadMaintenance();
+  } catch (err) { console.error(err); }
+}
+
+// Announcements
+async function loadAnnouncements() {
+  const list = document.getElementById("announcementList");
+  if (!list) return;
+  list.innerHTML = '';
+  try {
+    const res = await fetch(`${API_BASE}/api/announcements`);
+    const announcements = await res.json();
+    announcements.forEach(a => {
+      list.innerHTML += `<div class="card" style="margin-bottom: 10px;"><strong>To: ${a.target_role}</strong> <span style="float:right; font-size: 0.8rem; color: #888;">${new Date(a.created_at).toLocaleString()}</span><p>${a.message}</p></div>`;
+    });
+  } catch (err) { console.error(err); }
+}
+
+async function addAnnouncement() {
+  const message = prompt("Enter announcement message:");
+  const target_role = prompt("Target Role (all, parent, driver, student):");
+  if (!message || !target_role) return;
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    await fetch(`${API_BASE}/api/announcements`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, created_by: user.id, target_role })
+    });
+    loadAnnouncements();
+  } catch (err) { console.error(err); }
+}
+
+// Calendar
+async function loadCalendar() {
+  const list = document.getElementById("calendarList");
+  if (!list) return;
+  list.innerHTML = '';
+  try {
+    const res = await fetch(`${API_BASE}/api/calendar`);
+    const events = await res.json();
+    events.forEach(e => {
+      list.innerHTML += `<li>${e.date} - <strong>${e.title}</strong> ${e.is_holiday ? '(Holiday)' : ''}</li>`;
+    });
+  } catch (err) { console.error(err); }
+}
+
+async function addCalendarEvent() {
+  const title = prompt("Event Title:");
+  const date = prompt("Date (YYYY-MM-DD):");
+  const is_holiday = confirm("Is this a holiday/day off?");
+  if (!title || !date) return;
+  try {
+    await fetch(`${API_BASE}/api/calendar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, date, is_holiday })
+    });
+    loadCalendar();
+  } catch (err) { console.error(err); }
+}
+
 // Sidebar Toggle functionality
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
@@ -249,6 +368,7 @@ document.addEventListener("DOMContentLoaded", function() {
           if (user.role === 'admin') window.location.href = 'index.html';
           else if (user.role === 'driver') window.location.href = 'driver-dashboard.html';
           else if (user.role === 'student') window.location.href = 'student-dashboard.html';
+          else if (user.role === 'parent') window.location.href = 'parent-dashboard.html';
         } else {
           errorDiv.textContent = 'Invalid email or password';
         }
@@ -288,6 +408,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (user.role === 'admin') window.location.href = 'index.html';
             else if (user.role === 'driver') window.location.href = 'driver-dashboard.html';
             else if (user.role === 'student') window.location.href = 'student-dashboard.html';
+            else if (user.role === 'parent') window.location.href = 'parent-dashboard.html';
           }, 1500);
         } else {
           const data = await res.json();
@@ -311,17 +432,33 @@ document.addEventListener("DOMContentLoaded", function() {
     // Update Header UI
     const userNameEl = document.querySelector('.user-name');
     const userRoleEl = document.querySelector('.user-role');
-    if (userNameEl) userNameEl.textContent = user.email.split('@')[0];
-    if (userRoleEl) userRoleEl.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+    if (userNameEl) userNameEl.textContent = user.name || user.email.split('@')[0];
+    if (userRoleEl) {
+      userRoleEl.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      userRoleEl.className = `user-role role-badge ${user.role}`;
+    }
+    const avatarEl = document.getElementById('headerAvatar');
+    if (avatarEl) {
+      avatarEl.src = user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email)}&background=0ea5e9&color=fff`;
+    }
+    
+    // Notifications Logic
+    loadNotifications(user.id);
+    
+    // Profile Page Logic
+    if (path.includes('profile.html')) {
+      initProfilePage(user);
+    }
     
     // Role-based Access Control
-    const adminPages = ['index.html', 'vans.html', 'drivers.html', 'students.html', 'payments.html'];
+    const adminPages = ['index.html', 'vans.html', 'drivers.html', 'students.html', 'payments.html', 'routes.html', 'maintenance.html', 'announcements.html', 'calendar.html', 'tracking.html'];
     const isRoot = path === '/' || path.endsWith('/');
     const isOnAdminPage = adminPages.some(p => path.endsWith(p)) || isRoot;
     
     if (user.role !== 'admin' && isOnAdminPage) {
       if (user.role === 'driver') window.location.href = 'driver-dashboard.html';
       else if (user.role === 'student') window.location.href = 'student-dashboard.html';
+      else if (user.role === 'parent') window.location.href = 'parent-dashboard.html';
       return;
     }
 
@@ -340,6 +477,10 @@ document.addEventListener("DOMContentLoaded", function() {
       loadVans();
       loadDrivers();
       loadStudents();
+      loadRoutes();
+      loadMaintenance();
+      loadAnnouncements();
+      loadCalendar();
       
       // Chart.js Setup
       const chartCanvas = document.getElementById('revenueChart');
@@ -370,6 +511,199 @@ document.addEventListener("DOMContentLoaded", function() {
           }
         });
       }
+      }
     }
   }
 });
+
+// Global UI Logic (Dropdowns, Dark Mode, Auth)
+function logoutUser() {
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}
+
+// Dark Mode Toggle
+function initDarkMode() {
+  const isDark = localStorage.getItem('darkMode') === 'true';
+  if (isDark) document.body.classList.add('dark-theme');
+  
+  const toggleBtn = document.getElementById('darkModeToggle');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-theme');
+      localStorage.setItem('darkMode', document.body.classList.contains('dark-theme'));
+    });
+  }
+}
+initDarkMode();
+
+// Dropdowns
+document.addEventListener('click', (e) => {
+  const profileMenu = document.getElementById('profileMenu');
+  const notifMenu = document.getElementById('notificationMenu');
+  
+  // Profile Dropdown
+  if (e.target.closest('#profileToggle')) {
+    profileMenu?.classList.toggle('show');
+    if (notifMenu) notifMenu.classList.remove('show');
+  } else if (!e.target.closest('#profileMenu')) {
+    profileMenu?.classList.remove('show');
+  }
+
+
+  
+  // Notification Dropdown
+  if (e.target.closest('#notificationToggle')) {
+    notifMenu?.classList.toggle('show');
+    if (profileMenu) profileMenu.classList.remove('show');
+  } else if (!e.target.closest('#notificationMenu')) {
+    notifMenu?.classList.remove('show');
+  }
+});
+
+async function loadNotifications(userId) {
+  try {
+    const res = await fetch(`${API_BASE}/api/notifications/${userId}`);
+    const notifs = await res.json();
+    const countEl = document.getElementById('notificationCount');
+    const listEl = document.getElementById('notificationList');
+    
+    if (!countEl || !listEl) return;
+    
+    const unread = notifs.filter(n => !n.is_read).length;
+    countEl.textContent = unread;
+    countEl.style.display = unread > 0 ? 'flex' : 'none';
+    
+    if (notifs.length === 0) {
+      listEl.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-light); font-size: 0.9rem;">No new notifications</div>';
+      return;
+    }
+    
+    listEl.innerHTML = notifs.map(n => `
+      <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); background: ${n.is_read ? 'transparent' : 'rgba(14,165,233,0.05)'}">
+        <div style="font-size: 0.9rem; color: var(--text-dark);">${n.message}</div>
+        <div style="font-size: 0.75rem; color: var(--text-light); margin-top: 4px;">${new Date(n.created_at).toLocaleString()}</div>
+      </div>
+    `).join('');
+  } catch (err) {
+    console.error('Error loading notifications:', err);
+  }
+}
+
+async function markNotificationsRead() {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (!user) return;
+  try {
+    await fetch(`${API_BASE}/api/notifications/${user.id}/read`, { method: 'PUT' });
+    loadNotifications(user.id);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Profile Page Initialization
+async function initProfilePage(user) {
+  // Load Form Data
+  try {
+    const res = await fetch(`${API_BASE}/api/profile/${user.id}`);
+    const profileData = await res.json();
+    
+    document.getElementById('profileName').value = profileData.name || '';
+    document.getElementById('profileEmail').value = profileData.email || '';
+    document.getElementById('profilePhone').value = profileData.phone || '';
+    document.getElementById('profileAvatar').value = profileData.avatar || '';
+  } catch (err) {
+    console.error('Error loading profile:', err);
+  }
+  
+  // Load Activities
+  try {
+    const res = await fetch(`${API_BASE}/api/activities/${user.id}`);
+    const activities = await res.json();
+    const listEl = document.getElementById('activityList');
+    
+    if (activities.length === 0) {
+      listEl.innerHTML = '<li style="justify-content: center; color: var(--text-light);">No recent activity.</li>';
+    } else {
+      listEl.innerHTML = activities.map(a => `
+        <li>
+          <span>${a.action}</span>
+          <span class="activity-time">${new Date(a.created_at).toLocaleString()}</span>
+        </li>
+      `).join('');
+    }
+  } catch(err) {
+    console.error('Error loading activities:', err);
+  }
+  
+  // Handle Form Submit
+  document.getElementById('profileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('profileName').value;
+    const phone = document.getElementById('profilePhone').value;
+    const avatar = document.getElementById('profileAvatar').value;
+    const password = document.getElementById('profilePassword').value;
+    const msgEl = document.getElementById('profileMessage');
+    
+    try {
+      const payload = { name, phone, avatar };
+      if (password) payload.password = password;
+      
+      const res = await fetch(`${API_BASE}/api/profile/${user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      if (res.ok) {
+        msgEl.textContent = 'Profile updated successfully!';
+        msgEl.style.color = 'var(--success-color)';
+        
+        // Update local storage user object cache
+        user.name = name;
+        user.avatar = avatar;
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // Reload to update header
+        setTimeout(() => window.location.reload(), 1000);
+      } else {
+        msgEl.textContent = 'Failed to update profile.';
+        msgEl.style.color = 'var(--danger-color)';
+      }
+    } catch(err) {
+      msgEl.textContent = 'Network error.';
+      msgEl.style.color = 'var(--danger-color)';
+    }
+  });
+}
+
+// Map Initialization (Leaflet)
+function initMap() {
+  const mapEl = document.getElementById('map');
+  if (!mapEl) return;
+  // Check if Leaflet is loaded
+  if (typeof L === 'undefined') return setTimeout(initMap, 100);
+  
+  const map = L.map('map').setView([19.0760, 72.8777], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  const vanIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/2959/2959827.png',
+    iconSize: [40, 40]
+  });
+
+  const marker = L.marker([19.0760, 72.8777], {icon: vanIcon}).addTo(map)
+    .bindPopup('Van 1 - Moving to School');
+    
+  // Mock Movement
+  let lat = 19.0760;
+  let lng = 72.8777;
+  setInterval(() => {
+    lat += (Math.random() - 0.5) * 0.001;
+    lng += (Math.random() - 0.5) * 0.001;
+    marker.setLatLng([lat, lng]);
+  }, 2000);
+}
+document.addEventListener("DOMContentLoaded", initMap);

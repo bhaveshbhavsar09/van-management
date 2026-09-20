@@ -31,6 +31,18 @@ body {
   color: var(--text-dark);
   display: flex;
   min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-theme {
+  --bg-color: #0f172a;
+  --card-bg: #1e293b;
+  --text-dark: #f8fafc;
+  --text-light: #94a3b8;
+  --border-color: #334155;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
 }
 
 /* Auth Layout (Login) */
@@ -528,4 +540,152 @@ table tbody tr:hover {
   .header-search {
     display: none;
   }
+}
+
+/* Professional Profile Enhancements */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.action-icon {
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.action-icon:hover {
+  color: var(--primary-color);
+}
+
+.notification-bell {
+  position: relative;
+}
+.badge-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--danger-color);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.header-user {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-lg);
+  border-radius: 8px;
+  width: 220px;
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+.dropdown-menu.show {
+  display: flex;
+}
+
+.dropdown-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-dark);
+  text-decoration: none;
+  transition: background 0.2s;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+.dropdown-item:hover {
+  background: var(--bg-color);
+  color: var(--primary-color);
+}
+.dropdown-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+.role-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.role-badge.admin {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--secondary-color);
+}
+.role-badge.driver {
+  background: rgba(14, 165, 233, 0.2);
+  color: var(--primary-color);
+}
+.role-badge.student {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--success-color);
+}
+
+/* Profile Page Layout */
+.profile-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 1024px) {
+  .profile-container {
+    grid-template-columns: 1fr;
+  }
+}
+.activity-timeline {
+  list-style: none;
+  margin-top: 20px;
+}
+.activity-timeline li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.activity-timeline li:last-child {
+  border-bottom: none;
+}
+.activity-time {
+  font-size: 0.85rem;
+  color: var(--text-light);
 }

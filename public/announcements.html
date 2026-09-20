@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Drivers - Van Business</title>
+  <title>Announcements - Van Business</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
@@ -17,12 +17,12 @@
     <ul class="nav-links">
       <li><a href="index.html"><i class="ph ph-squares-four"></i> Dashboard</a></li>
       <li><a href="vans.html"><i class="ph ph-van"></i> Vans</a></li>
-      <li><a href="drivers.html" class="active"><i class="ph ph-steering-wheel"></i> Drivers</a></li>
+      <li><a href="drivers.html"><i class="ph ph-steering-wheel"></i> Drivers</a></li>
       <li><a href="students.html"><i class="ph ph-student"></i> Students</a></li>
       <li><a href="payments.html"><i class="ph ph-credit-card"></i> Payments</a></li>
       <li><a href="routes.html"><i class="ph ph-map-pin"></i> Routes</a></li>
       <li><a href="maintenance.html"><i class="ph ph-wrench"></i> Maintenance</a></li>
-      <li><a href="announcements.html"><i class="ph ph-megaphone"></i> Announcements</a></li>
+      <li><a href="announcements.html" class="active"><i class="ph ph-megaphone"></i> Announcements</a></li>
       <li><a href="calendar.html"><i class="ph ph-calendar"></i> Calendar</a></li>
       <li><a href="tracking.html"><i class="ph ph-map-trifold"></i> Tracking</a></li>
     </ul>
@@ -53,34 +53,7 @@
       </div>
     </header>
 
-    <div class="content-wrapper">
-      <div class="section-header">
-        <div>
-          <h1 class="page-title">Manage Drivers</h1>
-        </div>
-        <button class="btn-primary" style="width: auto; padding: 10px 20px; font-size: 0.9rem;" onclick="addDriver()">
-          <i class="ph ph-plus" style="vertical-align: middle;"></i> Add Driver
-        </button>
-      </div>
-
-      <div class="card">
-        <div class="table-container">
-          <table id="driverTable">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Assigned Van</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Rows will be added here -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <div class="content-wrapper"><div class="section-header"><div><h1 class="page-title">Announcements</h1></div></div><div class="card"><div style="display:flex; justify-content:space-between; margin-bottom: 20px;"><h2 class="card-title">Recent Announcements</h2><button class="btn-primary" onclick="addAnnouncement()"><i class="ph ph-plus"></i> New Announcement</button></div><div id="announcementList"></div></div></div>
   </main>
   
   <script src="script.js"></script>
