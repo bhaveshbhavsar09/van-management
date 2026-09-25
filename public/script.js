@@ -511,7 +511,6 @@ document.addEventListener("DOMContentLoaded", function() {
           }
         });
       }
-      }
     }
   }
 });
