@@ -105,7 +105,6 @@ async function loadDrivers() {
       row.innerHTML = `
         <td>${driver.name}</td>
         <td>${selectHtml}</td>
-        <td><span class="badge ${driver.status === 'Active' ? 'active' : 'pending'}">${driver.status}</span></td>
         <td><button class="btn-danger" onclick="removeDriver(${driver.id}, this)"><i class="ph ph-trash"></i> Remove</button></td>
       `;
     });
